@@ -7,30 +7,39 @@ object exercice2 {
 
   def main(args: Array[String]): Unit = {
     // Texts
-      // Create E-Wallet
-      val promptClientID: String = "Saisissez votre ID client:"
+
     // Variables
-      var nextPage: Int = 0
-      var clientID: Int = 0
+
     // Print menu
-      nextPage = menu()
-    // Next
-      if (nextPage == 1) {
-        // Create E-Wallet
-          println("")
-          println(promptClientID)
-          clientID = readInt()
-          // Check if clientID already exists
-      } else if (nextPage == 2) {
-        // Access E-Wallet
-
-      } else if (nextPage == 3) {
-        // Exit
-
-      }
+      menu()
   }
 
-  def menu(): Int = {
+  /*class Ewallet (idclient: String, pinclient: Int, soldeclient: BigDecimal, decouvertclient: Int = 500, fraisclient: Int = 3) {
+    // Variables
+      var clientid: String
+      var clientpin: Int
+      var clientsolde: BigDecimal
+      var clientdecouvert: Int
+      var clientfrais: Int
+    // Initialisation
+      clientid = idclient
+      clientpin = pinclient
+      clientsolde = soldeclient
+      clientdecouvert = decouvertclient
+      clientfrais = fraisclient
+    // Functions
+
+  }*/
+
+/*  def lireEwallet(): ArrayBuffer[Ewallet] = {
+    //
+  }
+
+  def sauverEwallet(listeEwallet: ArrayBuffer[Ewallet]): Unit = {
+    //
+  }*/
+
+  def menu(): Unit = {
     // Texts
       val menuTitle: String = "Menu"
       val menuCreate: String = "1. Créer un porte-monnaie"
@@ -47,6 +56,55 @@ object exercice2 {
       println("")
       println(menuPrompt)
       nextPage = readInt()
-    return nextPage
+    // Next menu
+      if (nextPage == 1) {
+        // Create E-Wallet
+        createWallet()
+      } else if (nextPage == 2) {
+        // Access E-Wallet
+        accessWallet()
+      } else if (nextPage == 3) {
+        // Exit
+        exit()
+      }
   }
+
+  def createWallet(): String = {
+    // Texts
+      val promptClientID: String = "Saisissez votre ID client:"
+    // Variables
+      var newWallet: String = ""
+      var clientID: String = ""
+    // Prompts
+      println("")
+      println(promptClientID)
+      clientID = readLine()
+    // Check if clientID already exists
+    return newWallet
+  }
+
+  def accessWallet() = {
+    // Texts
+      val promptClientID: String = "Saisissez votre ID client:"
+      val promptClientPIN: String = "Saisissez votre code PIN:"
+    // Variables
+      var newWallet: String = ""
+      var clientID: String = ""
+      var clientPIN: Int = 0
+    // Code
+      println("")
+      println(promptClientID)
+      clientID = readLine()
+      println("")
+      println(promptClientPIN)
+      clientPIN = readInt()
+  }
+
+  def exit() = {
+    // Texts
+    val menuTitle: String = "Menu"
+    // Variables
+    var newWallet: String = ""
+  }
+
 }
