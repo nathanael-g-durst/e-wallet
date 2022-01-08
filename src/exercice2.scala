@@ -1,11 +1,62 @@
 // Imports
 import scala.io.StdIn.readLine
 import scala.io.StdIn.readInt
+import java.io.File
+import java.io.PrintWriter
 import scala.collection.mutable.ArrayBuffer
+import scala.io.Source
 
 object exercice2 {
 
+  class Ewallet (idclient: String, pinclient: Int = 0, soldeclient: Double, decouvertclient: Int = 500, fraisclient: Int = 3) {
+    // Initialisation
+    if (pinclient == 0) {
+      // Random number
+      val random = scala.util.Random
+      pinclient = random.nextInt(99900) + 100
+    }
+    // Functions
+    // Check client and pin
+    def verifieClient(idclient_verif: String, codepin_verif: Int) : Boolean = {
+      idclient == idclient_verif && pinclient == codepin_verif
+    }
+    // Operation debit
+    def operationDebit(montantadebiter: Double) : Double = {
+      // Total amount of operation
+      val fees: Double = (montantadebiter * fraisclient) / 100
+      var total: Double = montantadebiter + fees
+      // Check if amount enough and do
+      if (soldeclient + decouvertclient >= total) {
+        soldeclient -= total
+        return soldeclient
+      } else {
+        return Double.NaN
+      }
+    }
+    // Operation credit
+    def operationCredit(montantacrediter: Double) : Double = {
+      val fees: Double = (montantacrediter * fraisclient) / 100
+      var total: Double = montantacrediter - fees
+      soldeclient += montantacrediter
+      return soldeclient
+    }
+    // Show informations
+    def afficheVerif() : Unit = {
+      println("Votre e-wallet :")
+      println("")
+      println("Votre identifiant :")
+      println(idclient)
+      println("Votre code pin :")
+      println(pinclient)
+      println("Solde du compte :")
+      println(soldeclient)
+    }
+  }
+
   def main(args: Array[String]): Unit = {
+    // Array
+    val ewallets = new Array[Ewallet](50)
+    var counter: Int = 0
     // Texts
 
     // Variables
@@ -14,30 +65,23 @@ object exercice2 {
       menu()
   }
 
-  /*class Ewallet (idclient: String, pinclient: Int, soldeclient: BigDecimal, decouvertclient: Int = 500, fraisclient: Int = 3) {
-    // Variables
-      var clientid: String
-      var clientpin: Int
-      var clientsolde: BigDecimal
-      var clientdecouvert: Int
-      var clientfrais: Int
-    // Initialisation
-      clientid = idclient
-      clientpin = pinclient
-      clientsolde = soldeclient
-      clientdecouvert = decouvertclient
-      clientfrais = fraisclient
-    // Functions
-
-  }*/
-
-/*  def lireEwallet(): ArrayBuffer[Ewallet] = {
+  def lireEwallet(): Array[Ewallet] = {
     //
+    val bufferedSource = io.Source.fromFile("/ewallets.txt")
+    for (line <- bufferedSource.getLines) {
+      val cols = line.split(",").map(_.trim)
+      // do whatever you want with the columns here
+      println(s"${cols(0)}|${cols(1)}|${cols(2)}|${cols(3)}")
+    }
+    bufferedSource.close
+    return bufferedSource
   }
 
-  def sauverEwallet(listeEwallet: ArrayBuffer[Ewallet]): Unit = {
+  def sauverEwallet(listeEwallet: Array[Ewallet]): Unit = {
     //
-  }*/
+
+    return
+  }
 
   def menu(): Unit = {
     // Texts
@@ -107,4 +151,4 @@ object exercice2 {
     var newWallet: String = ""
   }
 
-}
+}*/
