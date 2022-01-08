@@ -43,7 +43,7 @@ object exercice2 {
     def operationCredit(montantacrediter: Double) : Double = {
       val fees: Double = (montantacrediter * fraisclient) / 100
       var total: Double = montantacrediter - fees
-      soldeclient += montantacrediter
+      soldeclient += total
       return soldeclient
     }
     // Show informations
@@ -58,15 +58,6 @@ object exercice2 {
       println(soldeclient)
       println("")
     }
-  }
-
-  def main(args: Array[String]): Unit = {
-    // Wallets
-      var ewallets = lireEwallet()
-    // Variables
-
-    // Print menu
-      menu(ewallets)
   }
 
   def lireEwallet(): ArrayBuffer[Ewallet] = {
@@ -100,6 +91,13 @@ object exercice2 {
     }
     source.close()
     return
+  }
+
+  def main(args: Array[String]): Unit = {
+    // Wallets
+    val ewallets = lireEwallet()
+    // Print menu
+    menu(ewallets)
   }
 
   def menu(allWallets: ArrayBuffer[Ewallet]): Unit = {
@@ -162,7 +160,7 @@ object exercice2 {
         println("")
         println(promptClientAmount)
         initialAmount = readLine().toDouble
-        var newWallet = new Ewallet(idclient = clientID, soldeclient = initialAmount)
+        val newWallet = new Ewallet(idclient = clientID, soldeclient = initialAmount)
         allWallets.append(newWallet)
         newWallet.afficheVerif()
         menu(allWallets)
@@ -173,10 +171,13 @@ object exercice2 {
     // Texts
       val promptClientID: String = "Saisissez votre ID client:"
       val promptClientPIN: String = "Saisissez votre code PIN:"
+      val errorID: String = "Accès refusé: votre identifiant est erroné"
+      val errorPin: String = "Accès refusé: votre code PIN est erroné"
     // Variables
       var clientID: String = ""
       var clientPIN: Int = 0
-      var infoCheck: Boolean = false
+      var walletCheck: Ewallet = null
+      var pinCheck: Boolean = false
       var counter: Int = 0
     // Code
       println("")
@@ -185,13 +186,86 @@ object exercice2 {
       println("")
       println(promptClientPIN)
       clientPIN = readInt()
+    // Check login
+      while (walletCheck == null && counter < allWallets.length) {
+        val ewallet = allWallets(counter)
+        if (ewallet.idclient == clientID) {
+          pinCheck = true
+        }
+        if (ewallet.verifieClient(clientID, clientPIN)) {
+          walletCheck = ewallet
+        }
+        counter += 1
+      }
+      if (walletCheck == null) {
+        if (pinCheck) {
+          println("")
+          println(errorPin)
+          println("")
+          menu(allWallets)
+        } else {
+          println("")
+          println(errorID)
+          println("")
+          menu(allWallets)
+        }
+      } else {
+        walletOperations(allWallets, walletCheck)
+      }
+  }
+
+  def walletOperations(allWallets: ArrayBuffer[Ewallet], operationWallet: Ewallet): Unit = {
+    // Texts
+      val menuTitle: String = "Menu"
+      val menuCredit: String = "1. Créditer votre porte-monnaie"
+      val menuDebit: String = "2. Débiter votre porte-monnaie"
+      val menuPrompt: String = "Entrez votre choix:"
+      val creditPrompt: String = "Quel est le montant à créditer:"
+      val debitPrompt: String = "Quel est le montant à débiter:"
+      val errorBalance: String = "Solde insuffisant: la transaction n'a pas pu être effectué"
+    // Variables
+      var nextPage: Int = 0
+      var amountOperation: Double = 0
+      var amountWallet: Double = 0
+    // Print menu
+      println("")
+      println(menuTitle)
+      println(menuCredit)
+      println(menuDebit)
+      println("")
+      println(menuPrompt)
+      nextPage = readInt()
+    // Next menu
+      if (nextPage == 1) {
+        // Credit
+        println(creditPrompt)
+        amountOperation = readLine().toDouble
+        amountWallet = operationWallet.operationCredit(amountOperation)
+        println("")
+        println("Le solde de votre compte s'élève à : " + amountWallet)
+        println("")
+        menu(allWallets)
+      } else if (nextPage == 2) {
+        // Debit
+        println(debitPrompt)
+        amountOperation = readLine().toDouble
+        amountWallet = operationWallet.operationDebit(amountOperation)
+        println("")
+        if (amountWallet.isNaN) {
+          println(errorBalance)
+        } else {
+          println("Le solde de votre compte s'élève à : " + amountWallet)
+        }
+        println("")
+        menu(allWallets)
+      }
   }
 
   def exit(allWallets: ArrayBuffer[Ewallet]): Unit = {
-    // Texts
-    val menuTitle: String = "Menu"
-    // Variables
-    var newWallet: String = ""
+    sauverEwallet(allWallets)
+    for (ewallet <- allWallets) {
+      ewallet.afficheVerif()
+    }
   }
 
 }
