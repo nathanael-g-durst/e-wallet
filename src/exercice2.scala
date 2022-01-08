@@ -48,14 +48,9 @@ object exercice2 {
     }
     // Show informations
     def afficheVerif() : Unit = {
-      println("Votre e-wallet :")
-      println("")
-      println("Votre identifiant :")
-      println(idclient)
-      println("Votre code pin :")
-      println(pinclient)
-      println("Solde du compte :")
-      println(soldeclient)
+      println("Identifiant : " + idclient)
+      println("Code PIN : " + pinclient)
+      println("Solde du compte : " + soldeclient)
       println("")
     }
   }
@@ -162,6 +157,9 @@ object exercice2 {
         initialAmount = readLine().toDouble
         val newWallet = new Ewallet(idclient = clientID, soldeclient = initialAmount)
         allWallets.append(newWallet)
+        println("")
+        println("Votre e-wallet :")
+        println("")
         newWallet.afficheVerif()
         menu(allWallets)
       }
@@ -263,6 +261,7 @@ object exercice2 {
 
   def exit(allWallets: ArrayBuffer[Ewallet]): Unit = {
     sauverEwallet(allWallets)
+    println("")
     for (ewallet <- allWallets) {
       ewallet.afficheVerif()
     }
