@@ -8,7 +8,13 @@ import scala.io.Source
 
 object exercice2 {
 
-  class Ewallet (idclient: String, pinclient: Int = 0, soldeclient: Double, decouvertclient: Int = 500, fraisclient: Int = 3) {
+  class Ewallet (
+                  var idclient: String,
+                  var pinclient: Int = 0,
+                  var soldeclient: Double,
+                  var decouvertclient: Int = 500,
+                  var fraisclient: Int = 3
+                ) {
     // Initialisation
     if (pinclient == 0) {
       // Random number
@@ -50,40 +56,53 @@ object exercice2 {
       println(pinclient)
       println("Solde du compte :")
       println(soldeclient)
+      println("")
     }
   }
 
   def main(args: Array[String]): Unit = {
-    // Array
-    val ewallets = new Array[Ewallet](50)
-    var counter: Int = 0
-    // Texts
-
+    // Wallets
+      var ewallets = lireEwallet()
     // Variables
 
     // Print menu
-      menu()
+      menu(ewallets)
   }
 
-  def lireEwallet(): Array[Ewallet] = {
-    //
-    val bufferedSource = io.Source.fromFile("/ewallets.txt")
-    for (line <- bufferedSource.getLines) {
-      val cols = line.split(",").map(_.trim)
-      // do whatever you want with the columns here
-      println(s"${cols(0)}|${cols(1)}|${cols(2)}|${cols(3)}")
+  def lireEwallet(): ArrayBuffer[Ewallet] = {
+    // Source
+    val file = "ewallet.txt"
+    // Check file existence
+    if (!new File(file).exists) {
+      new File(file).createNewFile()
+      return ArrayBuffer[Ewallet]()
+    } else {
+      // Import wallets
+      val wallets = ArrayBuffer[Ewallet]()
+      val source = Source.fromFile(file)
+      for (line <- source.getLines) {
+        val newline = line.split(",")
+        val newwallet = new Ewallet(newline(0), newline(1).toInt, newline(2).toDouble)
+        wallets.append(newwallet)
+      }
+      // Close file
+      source.close()
+      return wallets
     }
-    bufferedSource.close
-    return bufferedSource
   }
 
-  def sauverEwallet(listeEwallet: Array[Ewallet]): Unit = {
-    //
-
+  def sauverEwallet(listeEwallet: ArrayBuffer[Ewallet]): Unit = {
+    // Print in txt file
+    val source = new PrintWriter(new File("ewallet.txt"))
+    // Print line by line
+    for (ewallets <- listeEwallet) {
+      source.write(ewallets.idclient + "," + ewallets.pinclient + "," + ewallets.soldeclient + "\n")
+    }
+    source.close()
     return
   }
 
-  def menu(): Unit = {
+  def menu(allWallets: ArrayBuffer[Ewallet]): Unit = {
     // Texts
       val menuTitle: String = "Menu"
       val menuCreate: String = "1. Créer un porte-monnaie"
@@ -103,38 +122,62 @@ object exercice2 {
     // Next menu
       if (nextPage == 1) {
         // Create E-Wallet
-        createWallet()
+        createWallet(allWallets)
       } else if (nextPage == 2) {
         // Access E-Wallet
-        accessWallet()
+        accessWallet(allWallets)
       } else if (nextPage == 3) {
         // Exit
-        exit()
+        exit(allWallets)
       }
   }
 
-  def createWallet(): String = {
+  def createWallet(allWallets: ArrayBuffer[Ewallet]): Unit = {
     // Texts
       val promptClientID: String = "Saisissez votre ID client:"
+      val promptClientAmount: String = "Saisissez votre montant initial:"
+      val errorExistant: String = "Erreur: un-e client-e ne peut avoir qu’un seul e-wallet à la fois"
     // Variables
-      var newWallet: String = ""
       var clientID: String = ""
+      var idCheck: Boolean = false
+      var counter: Int = 0
+      var initialAmount: Double = 0.0
     // Prompts
       println("")
       println(promptClientID)
       clientID = readLine()
     // Check if clientID already exists
-    return newWallet
+      while (counter < allWallets.length && !idCheck) {
+        if (allWallets(counter).idclient == clientID) {
+          idCheck = true
+        }
+        counter += 1
+      }
+      if (idCheck) {
+        println("")
+        println(errorExistant)
+        println("")
+        menu(allWallets)
+      } else {
+        println("")
+        println(promptClientAmount)
+        initialAmount = readLine().toDouble
+        var newWallet = new Ewallet(idclient = clientID, soldeclient = initialAmount)
+        allWallets.append(newWallet)
+        newWallet.afficheVerif()
+        menu(allWallets)
+      }
   }
 
-  def accessWallet() = {
+  def accessWallet(allWallets: ArrayBuffer[Ewallet]): Unit = {
     // Texts
       val promptClientID: String = "Saisissez votre ID client:"
       val promptClientPIN: String = "Saisissez votre code PIN:"
     // Variables
-      var newWallet: String = ""
       var clientID: String = ""
       var clientPIN: Int = 0
+      var infoCheck: Boolean = false
+      var counter: Int = 0
     // Code
       println("")
       println(promptClientID)
@@ -144,11 +187,11 @@ object exercice2 {
       clientPIN = readInt()
   }
 
-  def exit() = {
+  def exit(allWallets: ArrayBuffer[Ewallet]): Unit = {
     // Texts
     val menuTitle: String = "Menu"
     // Variables
     var newWallet: String = ""
   }
 
-}*/
+}
