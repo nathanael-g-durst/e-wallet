@@ -68,7 +68,7 @@ object exercice2 {
       val source = Source.fromFile(file)
       for (line <- source.getLines) {
         val newline = line.split(",")
-        val newwallet = new Ewallet(newline(0), newline(1).toInt, newline(2).toDouble)
+        val newwallet = new Ewallet(newline(0), newline(1).toInt, newline(2).toDouble, newline(3).toInt, newline(4).toInt)
         wallets.append(newwallet)
       }
       // Close file
@@ -82,7 +82,7 @@ object exercice2 {
     val source = new PrintWriter(new File("ewallet.txt"))
     // Print line by line
     for (ewallets <- listeEwallet) {
-      source.write(ewallets.idclient + "," + ewallets.pinclient + "," + ewallets.soldeclient + "\n")
+      source.write(ewallets.idclient + "," + ewallets.pinclient + "," + ewallets.soldeclient + "," + ewallets.decouvertclient + "," + ewallets.fraisclient + "\n")
     }
     source.close()
     return
